@@ -1,0 +1,22 @@
+<Project>
+
+  <PropertyGroup>
+    <PackageId>$(AssemblyName)</PackageId>
+
+    <Authors>xkinepa</Authors>
+    <Copyright>Copyright 2019</Copyright>
+    
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>https://xkinepa.github.io/DaiDai/</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/xkinepa/DaiDai</PackageProjectUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/xkinepa/DaiDai</RepositoryUrl>
+
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>embedded</DebugType>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <IncludeSymbols>false</IncludeSymbols>
+  </PropertyGroup>
+
+</Project>
