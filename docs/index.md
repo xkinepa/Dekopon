@@ -9,7 +9,7 @@
 [![GitHub forks](https://img.shields.io/github/forks/xkinepa/DaiDai.svg?style=social&label=Fork)](https://github.com/xkinepa/DaiDai)
 [![GitHub watchers](https://img.shields.io/github/watchers/xkinepa/DaiDai.svg?style=social&label=Watch)](https://github.com/xkinepa/DaiDai)
 
-DaiDai is a repository-style data access layer implementation.
+DaiDai is a repository-style data access layer implementation, supports handy transaction management and batch insert/update.
 
 ## Basics
 
@@ -57,6 +57,7 @@ The return tuple contains query and parameters, which can be passed to Dapper qu
         {
         }
 
+        // you can add other queries below
         public long CountAll()
         {
             return Conn.ExecuteScalar<long>($"select count(0) from {TableName} where deleted = 0");
@@ -103,6 +104,7 @@ When `RepositoryBase.Conn` or `IDatabaseManager.GetConnection()` is invoked, Dai
 * If no transaction exists, a new connection will be opened/reused and live along with the `IDatabaseManager`;
 * If transaction exists, a new connection will be opened/reused and live along with the `transaction.TransactionCompleted`.
 
+You can create nested txSupport with different isolation and propagation parameters.
 See `TransactionAwareResourceManager` for details.
 
 So, the order of `new UserRepository()` and `txManager.Begin()` doesn't matter.
@@ -124,9 +126,9 @@ So, the order of `new UserRepository()` and `txManager.Begin()` doesn't matter.
 ```
 
 ### IoC
-If you use IoC containers like `Microsoft.Extensions.DependencyInjection` or `Autofac`, here's best practise:
-* Create a `TransactionManager` as singleton;
-* Create `DatabaseManager` per http request and let it disposed at the end of the request;
+If you use IoC containers like `Microsoft.Extensions.DependencyInjection` or `Autofac`, here's the best practise:
+* Create a singleton `TransactionManager`;
+* Create each `DatabaseManager` per http request and let it disposed at the end of the request;
 * Create repositories and acquire transactions per usage, in your business logic layer.
 
 ```csharp
