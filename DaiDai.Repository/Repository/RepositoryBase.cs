@@ -10,6 +10,7 @@ namespace DaiDai.Repository
     public abstract class RepositoryBase<T> : RepositoryBase, IRepository<T>
     {
         protected EntityDefinition EntityDefinition { get; }
+        protected IEntityQueryBuilder EntityQueryBuilder { get; }
 
         protected string TableName => EntityQueryBuilder.Table(EntityDefinition);
         protected string AllColumnNames => EntityQueryBuilder.Columns(EntityDefinition);
@@ -17,6 +18,7 @@ namespace DaiDai.Repository
         protected RepositoryBase(IDatabaseManager databaseManager) : base(databaseManager)
         {
             EntityDefinition = EntityDefinitionContainer.Instance.Get(typeof(T));
+            EntityQueryBuilder = databaseManager.GetQueryBuilder();
         }
 
         public virtual IList<T> FindAll()
@@ -30,13 +32,9 @@ namespace DaiDai.Repository
     {
         private readonly IDatabaseManager _databaseManager;
 
-        protected IEntityQueryBuilder EntityQueryBuilder { get; }
-
         protected RepositoryBase(IDatabaseManager databaseManager)
         {
             _databaseManager = databaseManager;
-
-            EntityQueryBuilder = databaseManager.GetQueryBuilder();
         }
 
         protected IDbConnection Conn => _databaseManager.GetConnection();

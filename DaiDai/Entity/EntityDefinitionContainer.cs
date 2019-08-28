@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using DaiDai.Attributes;
+using DaiDai.Miscs;
 
 namespace DaiDai.Entity
 {
@@ -27,6 +28,8 @@ namespace DaiDai.Entity
             return _container.GetOrAdd(t, type =>
             {
                 var table = type.GetCustomAttribute<TableAttribute>(false);
+                Assertion.NotNull(table, $"{type.Name} has no {nameof(TableAttribute)}");
+
                 var where = type.GetCustomAttribute<WhereAttribute>(true);
                 var delete = type.GetCustomAttribute<DeleteAttribute>(true);
                 var properties = type.GetRuntimeProperties().Select(p => new
@@ -35,6 +38,7 @@ namespace DaiDai.Entity
                     Column = p.GetCustomAttribute<ColumnAttribute>(true),
                     Key = p.GetCustomAttribute<KeyAttribute>(true),
                     Generated = p.GetCustomAttribute<GeneratedAttribute>(true),
+                    Convert = p.GetCustomAttribute<ConvertAttribute>(true),
                 });
                 var definition = new EntityDefinition
                 {
@@ -49,14 +53,17 @@ namespace DaiDai.Entity
                             Getter = it.Property.CanRead ? GetGetter(type, it.Property) : null,
                             Setter = it.Property.CanWrite ? GetSetter(type, it.Property) : null,
                             Name = it.Column?.Name ?? it.Property.Name,
-                            Convert = it.Column?.Convert,
+                            Convert = it.Convert?.Pattern,
                             Generated = it.Generated != null,
                             Key = it.Key != null,
                             Id = it.Key?.IsIdentity ?? false,
                         })
                         .ToImmutableList(),
                 };
+
                 definition.IdColumn = definition.Columns.SingleOrDefault(it => it.Id);
+                Assertion.IsTrue(definition.IdColumn == null || definition.IdColumn.Property.PropertyType == typeof(long), $"idColumn's type should be {nameof(Int64)}");
+
                 return definition;
             });
         }

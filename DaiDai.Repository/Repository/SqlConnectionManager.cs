@@ -8,12 +8,12 @@ using DaiDai.Transaction;
 
 namespace DaiDai.Repository
 {
-    public class ConnectionManager : TransactionAwareResourceManager<DbConnection>, IDatabaseManager, IDisposable
+    public class SqlConnectionManager : TransactionAwareResourceManager<DbConnection>, IDatabaseManager, IDisposable
     {
         private readonly IConnectionProvider _connectionProvider = new SqlConnectionProvider();
         private readonly string _connectionString;
 
-        public ConnectionManager(string connectionString, ITransactionManager transactionManager = null)
+        public SqlConnectionManager(string connectionString, ITransactionManager transactionManager = null)
             : base(transactionManager)
         {
             _connectionString = connectionString;

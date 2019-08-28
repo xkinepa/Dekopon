@@ -15,7 +15,5 @@ namespace DaiDai.Attributes
         }
 
         public string Name { get; set; }
-
-        public string Convert { get; set; }
     }
 }

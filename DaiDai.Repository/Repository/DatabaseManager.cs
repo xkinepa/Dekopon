@@ -11,23 +11,25 @@ namespace DaiDai.Repository
     public class DatabaseManager : TransactionAwareResourceManager<DbConnection>, IDatabaseResourceManager, IDatabaseManager, IDisposable
     {
         private readonly Func<DbContext> _databaseFactory;
+        private readonly IEntityQueryBuilder _entityQueryBuilder;
 
-        public DatabaseManager(DbContextOptions dbContextOptions, ITransactionManager transactionManager = null)
-            : this(() => new DbContext(dbContextOptions), transactionManager)
+        public DatabaseManager(DbContextOptions dbContextOptions, ITransactionManager transactionManager = null, IEntityQueryBuilder entityQueryBuilder = null)
+            : this(() => new DbContext(dbContextOptions), transactionManager, entityQueryBuilder)
         {
         }
 
-        public DatabaseManager(Func<DbContext> databaseFactory, ITransactionManager transactionManager = null)
+        public DatabaseManager(Func<DbContext> databaseFactory, ITransactionManager transactionManager = null, IEntityQueryBuilder entityQueryBuilder = null)
             : base(transactionManager)
         {
             _databaseFactory = databaseFactory;
+            _entityQueryBuilder = entityQueryBuilder;
         }
 
         public virtual IDbConnection GetConnection() => GetResource();
 
         public IEntityQueryBuilder GetQueryBuilder()
         {
-            return new SqlServerEntityQueryBuilder();
+            return _entityQueryBuilder;
         }
 
         public override void Dispose()

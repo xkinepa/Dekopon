@@ -2,7 +2,7 @@
 
 namespace DaiDai.Repository
 {
-    public class UserRepository : CrudRepositoryBase<UserEntity>
+    public class UserRepository : CrudRepositoryBase<UserEntity>, IUserRepository
     {
         public UserRepository(IDatabaseManager databaseManager) : base(databaseManager)
         {
@@ -13,5 +13,10 @@ namespace DaiDai.Repository
         {
             return Conn.ExecuteScalar<long>($"select count(0) from {TableName} where deleted = 0");
         }
+    }
+
+    public interface IUserRepository : ICrudRepository<UserEntity>
+    {
+        long CountAll();
     }
 }

@@ -74,8 +74,6 @@ namespace DaiDai.Repository
 
         public IList<T> FindByIdIn(IList<long> ids) => FindAll(ids.Select(CreateEntity).ToList());
 
-        public T Get(long id) => GetById(id);
-
         public T GetById(long id) => Get(CreateEntity(id));
 
         public int DeleteById(long id) => Delete(CreateEntity(id));
