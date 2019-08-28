@@ -5,7 +5,7 @@
 
 [![License MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT) 
 
-[![GitHub stars](https://img.shields.io/github/stars/xkinepa/DaiDai.=social&label=Star)](https://github.com/xkinepa/DaiDai)
+[![GitHub stars](https://img.shields.io/github/stars/xkinepa/DaiDai.svg?style=social&label=Star)](https://github.com/xkinepa/DaiDai)
 [![GitHub forks](https://img.shields.io/github/forks/xkinepa/DaiDai.svg?style=social&label=Fork)](https://github.com/xkinepa/DaiDai)
 [![GitHub watchers](https://img.shields.io/github/watchers/xkinepa/DaiDai.svg?style=social&label=Watch)](https://github.com/xkinepa/DaiDai)
 
