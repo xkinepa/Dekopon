@@ -23,6 +23,9 @@ The return tuple contains query and parameters, which can be passed to Dapper qu
 
 ## Usages
 
+### NuGet
+`Install-Package DaiDai.Repository`
+
 ### Entity
 ```csharp
     [Table("Users")]
@@ -230,4 +233,4 @@ update [Users] set deleted = 1 join (values (@Id_0)) as data([Id]) on [Users].[I
 ## TODO
 * [x] Write usages
 * [ ] Write tests
-* [ ] Publish to NuGet
+* [x] Publish to NuGet (pre-release ver)
