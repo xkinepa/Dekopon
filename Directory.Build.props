@@ -5,9 +5,12 @@
 
     <Authors>xkinepa</Authors>
     <Copyright>Copyright 2019</Copyright>
-    
+
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionSuffix>pre-20190828</VersionSuffix>
+
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>https://xkinepa.github.io/DaiDai/</PackageReleaseNotes>
+    <!--<PackageReleaseNotes>https://xkinepa.github.io/DaiDai/</PackageReleaseNotes>-->
     <PackageProjectUrl>https://github.com/xkinepa/DaiDai</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>

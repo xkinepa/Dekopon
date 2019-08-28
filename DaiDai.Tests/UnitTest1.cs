@@ -1,7 +1,6 @@
-using System;
 using Xunit;
 
-namespace DaiDai.Tests
+namespace DaiDai
 {
     public class UnitTest1
     {
