@@ -48,7 +48,7 @@ namespace DaiDai.Dapper
                 var (type, columnName) = typeColumnName;
 
                 var entityDefinition = EntityDefinitionContainer.Instance.Get(type);
-                return entityDefinition.Columns.SingleOrDefault(it => string.Equals(it.Name, columnName))?.Property;
+                return entityDefinition.Columns.SingleOrDefault(it => string.Equals(it.Name, columnName, StringComparison.InvariantCultureIgnoreCase))?.Property;
             }
 
             RegisterTypeMap(type => type.GetCustomAttribute<TableAttribute>() != null, CustomPropertyTypeMapProvider);
