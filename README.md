@@ -107,7 +107,7 @@ When `RepositoryBase.Conn` or `IDatabaseManager.GetConnection()` is invoked, Dai
 You can create nested txSupport with different isolation and propagation parameters.
 See `TransactionAwareResourceManager` for details.
 
-So, the order of `new UserRepository()` and `txManager.Begin()` doesn't matter.
+So, the order of `new UserRepository()` and `txManager.Begin()` doesn't matter, you can define your custom [TransactionalAttribute] with AOP frameworks.
 
 ```csharp
     using (var txManager = new TransactionManager()) // txManager should be singleton
@@ -148,11 +148,23 @@ If you use IoC containers like `Microsoft.Extensions.DependencyInjection` or `Au
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ITransactionManager _txManager;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, ITransactionManager txManager)
         {
             _userRepository = userRepository;
+			_txManager = txManager;
         }
+
+		public void CreateUser()
+		{
+			using (var txSupport = _txManager.Begin(TransactionScopeOption.Required, IsolationLevel.ReadCommitted))
+			{
+				userRepository.Add(new UserEntity { });
+
+				txSupport.Complete();
+			}
+		}
     }
 ```
 
@@ -192,6 +204,8 @@ If you use IoC containers like `Microsoft.Extensions.DependencyInjection` or `Au
         public DateTimeOffset CreateTime { get; set; }
     }
 ```
+
+For UserEntity defined above, all queries are generated as:
 
 #### SqlServerEntityQueryBuilder
 
@@ -243,5 +257,5 @@ update [Users] set deleted = 1 join (values (@Id_0)) as data([Id]) on [Users].[I
 
 ## TODO
 * [x] Write usages
-* [ ] Write tests
+* [x] Write tests (more tests needed)
 * [x] Publish to NuGet (pre-release ver)
