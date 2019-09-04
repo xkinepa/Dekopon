@@ -84,11 +84,14 @@ namespace DaiDai
             using (_transactionManager.Begin())
             {
                 resource = _resourceManager.GetResource();
+                Assert.False(resource.Disposed);
             }
 
+            Assert.True(resource.Disposed);
+
             var anotherResource = _resourceManager.GetResource();
-            Assert.NotEqual(resource.Transaction, anotherResource.Transaction);
             Assert.Null(anotherResource.Transaction);
+            Assert.NotEqual(resource.Transaction, anotherResource.Transaction);
         }
 
         [Fact]
