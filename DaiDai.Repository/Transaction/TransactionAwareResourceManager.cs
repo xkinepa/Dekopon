@@ -13,7 +13,7 @@ namespace DaiDai.Transaction
 
         private readonly Lazy<T> _resourceWithoutTransaction;
 
-        protected TransactionAwareResourceManager(ITransactionManager transactionManager = null)
+        protected TransactionAwareResourceManager(ITransactionManager transactionManager)
         {
             _resourceWithoutTransaction = new Lazy<T>(() => CreateResource(null));
             _transactionManager = transactionManager;
