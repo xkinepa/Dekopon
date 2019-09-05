@@ -153,18 +153,18 @@ If you use IoC containers like `Microsoft.Extensions.DependencyInjection` or `Au
         public UserService(IUserRepository userRepository, ITransactionManager txManager)
         {
             _userRepository = userRepository;
-			_txManager = txManager;
+            _txManager = txManager;
         }
 
-		public void CreateUser()
-		{
-			using (var txSupport = _txManager.Begin(TransactionScopeOption.Required, IsolationLevel.ReadCommitted))
-			{
-				userRepository.Add(new UserEntity { });
+        public void CreateUser()
+        {
+            using (var txSupport = _txManager.Begin(TransactionScopeOption.Required, IsolationLevel.ReadCommitted))
+            {
+                userRepository.Add(new UserEntity { });
 
-				txSupport.Complete();
-			}
-		}
+                txSupport.Complete();
+            }
+        }
     }
 ```
 
