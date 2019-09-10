@@ -1,19 +1,19 @@
-# DaiDai
+# Daidai
 
-[![NuGet](https://img.shields.io/nuget/v/DaiDai.Repository.svg)](https://www.nuget.org/packages/DaiDai.Repository)
-[![NuGet](https://img.shields.io/nuget/dt/DaiDai.Repository.svg)](https://www.nuget.org/packages/DaiDai.Repository)
+[![NuGet](https://img.shields.io/nuget/v/Daidai.Repository.svg)](https://www.nuget.org/packages/Daidai.Repository)
+[![NuGet](https://img.shields.io/nuget/dt/Daidai.Repository.svg)](https://www.nuget.org/packages/Daidai.Repository)
 
 [![License MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT) 
 
-[![GitHub stars](https://img.shields.io/github/stars/xkinepa/DaiDai.svg?style=social&label=Star)](https://github.com/xkinepa/DaiDai)
-[![GitHub forks](https://img.shields.io/github/forks/xkinepa/DaiDai.svg?style=social&label=Fork)](https://github.com/xkinepa/DaiDai)
-[![GitHub watchers](https://img.shields.io/github/watchers/xkinepa/DaiDai.svg?style=social&label=Watch)](https://github.com/xkinepa/DaiDai)
+[![GitHub stars](https://img.shields.io/github/stars/xkinepa/Daidai.svg?style=social&label=Star)](https://github.com/xkinepa/Daidai)
+[![GitHub forks](https://img.shields.io/github/forks/xkinepa/Daidai.svg?style=social&label=Fork)](https://github.com/xkinepa/Daidai)
+[![GitHub watchers](https://img.shields.io/github/watchers/xkinepa/Daidai.svg?style=social&label=Watch)](https://github.com/xkinepa/Daidai)
 
-DaiDai is a repository-style data access layer implementation, supports handy transaction management and batch insert/update.
+Daidai is a repository-style data access layer implementation, supports handy transaction management and batch insert/update.
 
 ## Basics
 
-DaiDai currently only targets netstandard2.0, and only `SqlServerEntityQueryBuilder` is supported for now.
+Daidai currently only targets netstandard2.0, and only `SqlServerEntityQueryBuilder` is supported for now.
 
 `IEntityQueryBuilder` generates queries for:
 ```csharp
@@ -33,7 +33,7 @@ The return tuple contains query and parameters, which can be passed to Dapper qu
 ## Usages
 
 ### NuGet
-`Install-Package DaiDai.Repository`
+`Install-Package Daidai.Repository`
 
 ### Entity
 ```csharp
@@ -100,7 +100,7 @@ The return tuple contains query and parameters, which can be passed to Dapper qu
 
 ### Transaction and Connection lifecycle
 `TransactionManager` simply wraps `TransactionScope`.
-When `RepositoryBase.Conn` or `IDatabaseManager.GetConnection()` is invoked, DaiDai will check if `Transaction.Current` exists:
+When `RepositoryBase.Conn` or `IDatabaseManager.GetConnection()` is invoked, Daidai will check if `Transaction.Current` exists:
 * If no transaction exists, a new connection will be opened/reused and live along with the `IDatabaseManager`;
 * If transaction exists, a new connection will be opened/reused and live along with the `transaction.TransactionCompleted`.
 
@@ -172,7 +172,7 @@ If you use IoC containers like `Microsoft.Extensions.DependencyInjection` or `Au
 * Sql Server limit 2100 parameters in one command, so batch methods like `AddAll` and `UpdateAll` accepts chunk size as a parameter, suggested value is `2100 / fieldCountInEntityT`.
 * If you need any wrap over connections, for example working with `ProfiledDbConnection` from `MiniProfiler`, simply derive `DatabaseManager` or `SqlConnectionManager`.
 * Fell free to implement `IEntityQueryBuilder` for other databases, any PR are welcome.
-* See `DaiDai.Samples` for full example.
+* See `Daidai.Samples` for full example.
 
 ## Entities and Queries
 

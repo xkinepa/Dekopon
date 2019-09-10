@@ -11,6 +11,8 @@
 
 Daidai is a repository-style data access layer implementation, supports handy transaction management and batch insert/update.
 
+[Full docs](https://xkinepa.github.io/Daidai)
+
 ## Basics
 
 Daidai currently only targets netstandard2.0, and only `SqlServerEntityQueryBuilder` is supported for now.
