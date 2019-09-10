@@ -1,7 +1,7 @@
 ﻿using System;
-using DaiDai.Attributes;
+using Daidai.Attributes;
 
-namespace DaiDai.Repository
+namespace Daidai.Repository
 {
     [Table("Users")]
     public class UserEntity : EntityBase

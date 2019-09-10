@@ -1,18 +1,18 @@
 ﻿using System;
-using DaiDai.Dapper;
-using DaiDai.Miscs;
-using DaiDai.QueryBuilder;
-using DaiDai.Repository;
-using DaiDai.Transaction;
+using Daidai.Dapper;
+using Daidai.Miscs;
+using Daidai.QueryBuilder;
+using Daidai.Repository;
+using Daidai.Transaction;
 using Microsoft.EntityFrameworkCore;
 
-namespace DaiDai
+namespace Daidai
 {
     internal class Program
     {
         private static void Main(string[] args)
         {
-            var connectionString = $@"Server=(local);Database=tempdb;User ID=sa;Password=sa";
+            var connectionString = $@"Server=docker-host;Database=TestDb;User ID=sa;Password=yourStrong(!)Password";
 
             DapperInitializer.RegisterAnnotatedTypeMap(); // register typeMap for entities with [TableAttribute]
 
@@ -36,7 +36,6 @@ namespace DaiDai
                         //userRepository.DeleteAll(Enumerables.List(new UserEntity()));
 
                         Console.WriteLine(userRepository.CountAll());
-
                         txSupport.Complete();
                     }
                 }

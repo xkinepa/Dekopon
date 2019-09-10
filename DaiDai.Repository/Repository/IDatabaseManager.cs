@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using DaiDai.QueryBuilder;
+using Daidai.QueryBuilder;
 
-namespace DaiDai.Repository
+namespace Daidai.Repository
 {
     public interface IDatabaseManager
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Transactions;
 
-namespace DaiDai.Transaction
+namespace Daidai.Transaction
 {
     public interface ITransactionManager : IDisposable
     {

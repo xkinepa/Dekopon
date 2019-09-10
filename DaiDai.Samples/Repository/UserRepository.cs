@@ -1,6 +1,6 @@
 ﻿using Dapper;
 
-namespace DaiDai.Repository
+namespace Daidai.Repository
 {
     public class UserRepository : CrudRepositoryBase<UserEntity>, IUserRepository
     {

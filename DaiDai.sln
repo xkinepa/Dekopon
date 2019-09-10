@@ -13,13 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaiDai", "DaiDai\DaiDai.csproj", "{B1ED1504-4D81-4BB4-A252-F35590749E2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daidai", "Daidai\Daidai.csproj", "{B1ED1504-4D81-4BB4-A252-F35590749E2D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaiDai.Repository", "DaiDai.Repository\DaiDai.Repository.csproj", "{411F978F-61A2-41ED-9AE3-896C116A37F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daidai.Repository", "Daidai.Repository\Daidai.Repository.csproj", "{411F978F-61A2-41ED-9AE3-896C116A37F4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaiDai.Tests", "DaiDai.Tests\DaiDai.Tests.csproj", "{6EDA4FC1-4296-4873-8220-01003EC273D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daidai.Tests", "Daidai.Tests\Daidai.Tests.csproj", "{6EDA4FC1-4296-4873-8220-01003EC273D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaiDai.Samples", "DaiDai.Samples\DaiDai.Samples.csproj", "{29B97F3F-319A-4822-8C51-0B489456E96F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daidai.Samples", "Daidai.Samples\Daidai.Samples.csproj", "{29B97F3F-319A-4822-8C51-0B489456E96F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

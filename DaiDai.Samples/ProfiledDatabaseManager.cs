@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
-using DaiDai.Repository;
-using DaiDai.Transaction;
+using Daidai.Repository;
+using Daidai.Transaction;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Profiling.Data;
 
-namespace DaiDai
+namespace Daidai
 {
     public class ProfiledDatabaseManager : DatabaseManager
     {

@@ -4,10 +4,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using DaiDai.Attributes;
-using DaiDai.Miscs;
+using Daidai.Attributes;
+using Daidai.Miscs;
 
-namespace DaiDai.Entity
+namespace Daidai.Entity
 {
     public class EntityDefinitionContainer
     {

@@ -1,6 +1,6 @@
-﻿using DaiDai.Attributes;
+﻿using Daidai.Attributes;
 
-namespace DaiDai.Repository
+namespace Daidai.Repository
 {
     [Where(Clause = "deleted = 0")]
     [Delete(Set = "deleted = 1")]

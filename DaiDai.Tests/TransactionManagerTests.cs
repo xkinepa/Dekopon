@@ -1,10 +1,10 @@
 using System;
 using System.Transactions;
-using DaiDai.Transaction;
+using Daidai.Transaction;
 using Xunit;
-using TransactionManager = DaiDai.Transaction.TransactionManager;
+using TransactionManager = Daidai.Transaction.TransactionManager;
 
-namespace DaiDai
+namespace Daidai
 {
     public class TransactionManagerTests : IDisposable
     {

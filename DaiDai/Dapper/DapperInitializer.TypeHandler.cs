@@ -2,7 +2,7 @@
 using System.Linq;
 using Dapper;
 
-namespace DaiDai.Dapper
+namespace Daidai.Dapper
 {
     public static partial class DapperInitializer
     {

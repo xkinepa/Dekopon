@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using JetBrains.Annotations;
 
-namespace DaiDai.Miscs
+namespace Daidai.Miscs
 {
     public static class Assertion
     {

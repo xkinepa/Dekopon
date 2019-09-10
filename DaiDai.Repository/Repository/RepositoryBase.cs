@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using DaiDai.Entity;
-using DaiDai.QueryBuilder;
+using Daidai.Entity;
+using Daidai.QueryBuilder;
 using Dapper;
 
-namespace DaiDai.Repository
+namespace Daidai.Repository
 {
     public abstract class RepositoryBase<T> : RepositoryBase, IRepository<T>
     {

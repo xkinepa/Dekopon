@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace DaiDai.Entity
+namespace Daidai.Entity
 {
     public class EntityDefinition
     {

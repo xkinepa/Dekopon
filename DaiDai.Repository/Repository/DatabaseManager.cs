@@ -2,11 +2,11 @@
 using System.Data;
 using System.Data.Common;
 using System.Transactions;
-using DaiDai.QueryBuilder;
-using DaiDai.Transaction;
+using Daidai.QueryBuilder;
+using Daidai.Transaction;
 using Microsoft.EntityFrameworkCore;
 
-namespace DaiDai.Repository
+namespace Daidai.Repository
 {
     public class DatabaseManager : TransactionAwareResourceManager<DbConnection>, IDatabaseResourceManager, IDatabaseManager, IDisposable
     {

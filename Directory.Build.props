@@ -10,11 +10,11 @@
     <VersionSuffix></VersionSuffix>
 
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <!--<PackageReleaseNotes>https://xkinepa.github.io/DaiDai/</PackageReleaseNotes>-->
-    <PackageProjectUrl>https://github.com/xkinepa/DaiDai</PackageProjectUrl>
+    <!--<PackageReleaseNotes>https://xkinepa.github.io/Daidai/</PackageReleaseNotes>-->
+    <PackageProjectUrl>https://github.com/xkinepa/Daidai</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/xkinepa/DaiDai</RepositoryUrl>
+    <RepositoryUrl>https://github.com/xkinepa/Daidai</RepositoryUrl>
 
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>

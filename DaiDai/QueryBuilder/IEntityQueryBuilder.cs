@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using DaiDai.Entity;
+using Daidai.Entity;
 
-namespace DaiDai.QueryBuilder
+namespace Daidai.QueryBuilder
 {
     public interface IEntityQueryBuilder
     {

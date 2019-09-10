@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DaiDai.Repository
+namespace Daidai.Repository
 {
     public interface IRepository<T> : IRepository
     {

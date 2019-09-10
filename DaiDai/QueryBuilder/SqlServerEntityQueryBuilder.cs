@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using DaiDai.Entity;
-using DaiDai.Miscs;
+using Daidai.Entity;
+using Daidai.Miscs;
 
-namespace DaiDai.QueryBuilder
+namespace Daidai.QueryBuilder
 {
     public class SqlServerEntityQueryBuilder : IEntityQueryBuilder
     {

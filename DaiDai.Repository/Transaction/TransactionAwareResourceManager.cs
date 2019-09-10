@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using DaiDai.Miscs;
+using Daidai.Miscs;
 
-namespace DaiDai.Transaction
+namespace Daidai.Transaction
 {
     public abstract class TransactionAwareResourceManager<T> : IResourceManager<T>, IDisposable where T : IDisposable
     {

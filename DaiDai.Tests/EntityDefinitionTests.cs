@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using DaiDai.Attributes;
-using DaiDai.Entity;
-using DaiDai.Miscs;
+using Daidai.Attributes;
+using Daidai.Entity;
+using Daidai.Miscs;
 using Xunit;
 
-namespace DaiDai
+namespace Daidai
 {
     public class EntityDefinitionTests : IDisposable
     {

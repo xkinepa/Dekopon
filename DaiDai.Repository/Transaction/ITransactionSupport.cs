@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DaiDai.Transaction
+namespace Daidai.Transaction
 {
     public interface ITransactionSupport : IDisposable
     {

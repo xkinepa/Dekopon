@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace DaiDai.Miscs
+namespace Daidai.Miscs
 {
     public static class Enumerables
     {

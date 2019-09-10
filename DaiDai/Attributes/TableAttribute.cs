@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DaiDai.Attributes
+namespace Daidai.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class TableAttribute : Attribute

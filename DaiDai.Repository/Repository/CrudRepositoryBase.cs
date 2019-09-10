@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DaiDai.Miscs;
+using Daidai.Miscs;
 using Dapper;
 
-namespace DaiDai.Repository
+namespace Daidai.Repository
 {
     public abstract class CrudRepositoryBase<T> : RepositoryBase<T>, ICrudRepository<T>
     {

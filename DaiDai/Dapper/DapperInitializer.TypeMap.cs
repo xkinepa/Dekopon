@@ -3,12 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using DaiDai.Attributes;
-using DaiDai.Entity;
-using DaiDai.Miscs;
+using Daidai.Attributes;
+using Daidai.Entity;
+using Daidai.Miscs;
 using Dapper;
 
-namespace DaiDai.Dapper
+namespace Daidai.Dapper
 {
     public static partial class DapperInitializer
     {
