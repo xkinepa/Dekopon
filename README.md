@@ -1,21 +1,21 @@
-# Daidai
+# Dekopon
 
-[![NuGet](https://img.shields.io/nuget/v/Daidai.Repository.svg)](https://www.nuget.org/packages/Daidai.Repository)
-[![NuGet](https://img.shields.io/nuget/dt/Daidai.Repository.svg)](https://www.nuget.org/packages/Daidai.Repository)
+[![NuGet](https://img.shields.io/nuget/v/Dekopon.Repository.svg)](https://www.nuget.org/packages/Dekopon.Repository)
+[![NuGet](https://img.shields.io/nuget/dt/Dekopon.Repository.svg)](https://www.nuget.org/packages/Dekopon.Repository)
 
 [![License MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT) 
 
-[![GitHub stars](https://img.shields.io/github/stars/xkinepa/Daidai.svg?style=social&label=Star)](https://github.com/xkinepa/Daidai)
-[![GitHub forks](https://img.shields.io/github/forks/xkinepa/Daidai.svg?style=social&label=Fork)](https://github.com/xkinepa/Daidai)
-[![GitHub watchers](https://img.shields.io/github/watchers/xkinepa/Daidai.svg?style=social&label=Watch)](https://github.com/xkinepa/Daidai)
+[![GitHub stars](https://img.shields.io/github/stars/xkinepa/Dekopon.svg?style=social&label=Star)](https://github.com/xkinepa/Dekopon)
+[![GitHub forks](https://img.shields.io/github/forks/xkinepa/Dekopon.svg?style=social&label=Fork)](https://github.com/xkinepa/Dekopon)
+[![GitHub watchers](https://img.shields.io/github/watchers/xkinepa/Dekopon.svg?style=social&label=Watch)](https://github.com/xkinepa/Dekopon)
 
-Daidai is a repository-style data access layer implementation, supports handy transaction management and batch insert/update.
+Dekopon is a repository-style data access layer implementation, supports handy transaction management and batch insert/update.
 
-[Full docs](https://xkinepa.github.io/Daidai)
+[Full docs](https://xkinepa.github.io/Dekopon)
 
 ## Basics
 
-Daidai currently only targets netstandard2.0, and only `SqlServerEntityQueryBuilder` is supported for now.
+Dekopon currently only targets netstandard2.0, and only `SqlServerEntityQueryBuilder` is supported for now.
 
 `IEntityQueryBuilder` generates queries for:
 ```csharp
@@ -35,7 +35,7 @@ The return tuple contains query and parameters, which can be passed to Dapper qu
 ## Usages
 
 ### NuGet
-`Install-Package Daidai.Repository`
+`Install-Package Dekopon.Repository`
 
 ### Entity
 ```csharp
@@ -102,7 +102,7 @@ The return tuple contains query and parameters, which can be passed to Dapper qu
 
 ### Transaction and Connection lifecycle
 `TransactionManager` simply wraps `TransactionScope`.
-When `RepositoryBase.Conn` or `IDatabaseManager.GetConnection()` is invoked, Daidai will check if `Transaction.Current` exists:
+When `RepositoryBase.Conn` or `IDatabaseManager.GetConnection()` is invoked, Dekopon will check if `Transaction.Current` exists:
 * If no transaction exists, a new connection will be opened/reused and live along with the `IDatabaseManager`;
 * If transaction exists, a new connection will be opened/reused and live along with the `transaction.TransactionCompleted`.
 
@@ -174,7 +174,7 @@ If you use IoC containers like `Microsoft.Extensions.DependencyInjection` or `Au
 * Sql Server limit 2100 parameters in one command, so batch methods like `AddAll` and `UpdateAll` accepts chunk size as a parameter, suggested value is `2100 / fieldCountInEntityT`.
 * If you need any wrap over connections, for example working with `ProfiledDbConnection` from `MiniProfiler`, simply derive `DatabaseManager` or `SqlConnectionManager`.
 * Fell free to implement `IEntityQueryBuilder` for other databases, any PR are welcome.
-* See `Daidai.Samples` for full example.
+* See `Dekopon.Samples` for full example.
 
 ## Entities and Queries
 

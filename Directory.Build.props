@@ -6,15 +6,15 @@
     <Authors>xkinepa</Authors>
     <Copyright>Copyright 2019</Copyright>
 
-    <VersionPrefix>0.2.0</VersionPrefix>
+    <VersionPrefix>0.1.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
 
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <!--<PackageReleaseNotes>https://xkinepa.github.io/Daidai/</PackageReleaseNotes>-->
-    <PackageProjectUrl>https://github.com/xkinepa/Daidai</PackageProjectUrl>
+    <!--<PackageReleaseNotes>https://xkinepa.github.io/Dekopon/</PackageReleaseNotes>-->
+    <PackageProjectUrl>https://github.com/xkinepa/Dekopon</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/xkinepa/Daidai</RepositoryUrl>
+    <RepositoryUrl>https://github.com/xkinepa/Dekopon</RepositoryUrl>
 
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RootNamespace>Dekopon</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
+    <PackageReference Include="MiniProfiler.Shared" Version="4.0.180" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dekopon.Repository\Dekopon.Repository.csproj" />
+    <ProjectReference Include="..\Dekopon\Dekopon.csproj" />
+  </ItemGroup>
+
+</Project>
