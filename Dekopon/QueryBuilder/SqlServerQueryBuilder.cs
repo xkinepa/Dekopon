@@ -8,7 +8,7 @@ using Dekopon.Miscs;
 
 namespace Dekopon.QueryBuilder
 {
-    public class SqlServerEntityQueryBuilder : IEntityQueryBuilder
+    public class SqlServerQueryBuilder : IQueryBuilder, IEntityQueryBuilder
     {
         private static readonly ConcurrentDictionary<(Type, string), string[]> QueryTemplates = new ConcurrentDictionary<(Type, string), string[]>();
 

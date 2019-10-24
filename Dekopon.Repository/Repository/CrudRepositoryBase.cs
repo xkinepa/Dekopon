@@ -14,19 +14,19 @@ namespace Dekopon.Repository
 
         public IList<T> FindAll(IList<T> entities)
         {
-            var (query, parameters) = EntityQueryBuilder.FindAll(EntityDefinition, entities);
+            var (query, parameters) = QueryBuilder.FindAll(EntityDefinition, entities);
             return Conn.Query<T>(query, parameters).ToList();
         }
 
         public T Get(T entity)
         {
-            var (query, parameters) = EntityQueryBuilder.Find(EntityDefinition, entity);
+            var (query, parameters) = QueryBuilder.Find(EntityDefinition, entity);
             return Conn.QuerySingleOrDefault<T>(query, parameters);
         }
 
         public long Add(T entity)
         {
-            var (query, @params) = EntityQueryBuilder.Insert(EntityDefinition, entity);
+            var (query, @params) = QueryBuilder.Insert(EntityDefinition, entity);
             var id = Conn.ExecuteScalar<long>(query, @params);
             if (id > 0)
             {
@@ -40,14 +40,14 @@ namespace Dekopon.Repository
         {
             return Chunk(entities, chunk).Select(it =>
             {
-                var (query, parameters) = EntityQueryBuilder.InsertAll(EntityDefinition, it);
+                var (query, parameters) = QueryBuilder.InsertAll(EntityDefinition, it);
                 return Conn.Execute(query, parameters);
             }).Sum();
         }
 
         public int Update(T entity)
         {
-            var (query, parameters) = EntityQueryBuilder.Update(EntityDefinition, entity);
+            var (query, parameters) = QueryBuilder.Update(EntityDefinition, entity);
             return Conn.Execute(query, parameters);
         }
 
@@ -55,20 +55,20 @@ namespace Dekopon.Repository
         {
             return Chunk(entities, chunk).Select(it =>
             {
-                var (query, parameters) = EntityQueryBuilder.UpdateAll(EntityDefinition, it);
+                var (query, parameters) = QueryBuilder.UpdateAll(EntityDefinition, it);
                 return Conn.Execute(query, parameters);
             }).Sum();
         }
 
         public int Delete(T entity)
         {
-            var (query, parameters) = EntityQueryBuilder.Delete(EntityDefinition, entity);
+            var (query, parameters) = QueryBuilder.Delete(EntityDefinition, entity);
             return Conn.Execute(query, parameters);
         }
 
         public int DeleteAll(IList<T> entities)
         {
-            var (query, parameters) = EntityQueryBuilder.DeleteAll(EntityDefinition, entities);
+            var (query, parameters) = QueryBuilder.DeleteAll(EntityDefinition, entities);
             return Conn.Execute(query, parameters);
         }
 

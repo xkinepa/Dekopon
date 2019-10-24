@@ -10,21 +10,23 @@ namespace Dekopon.Repository
 {
     public class SqlConnectionManager : TransactionAwareResourceManager<DbConnection>, IDatabaseManager, IDisposable
     {
-        private readonly IConnectionProvider _connectionProvider = new SqlConnectionProvider();
+        private readonly IConnectionProvider _connectionProvider;
         private readonly string _connectionString;
 
-        public SqlConnectionManager(string connectionString, ITransactionManager transactionManager = null)
+        private readonly IQueryBuilder _queryBuilder;
+
+        public SqlConnectionManager(string connectionString, ITransactionManager transactionManager = null,
+            SqlConnectionProvider connectionProvider = null, SqlServerQueryBuilder queryBuilder = null)
             : base(transactionManager)
         {
             _connectionString = connectionString;
+            _connectionProvider = connectionProvider ?? new SqlConnectionProvider();
+            _queryBuilder = queryBuilder ?? new SqlServerQueryBuilder();
         }
 
         public virtual IDbConnection GetConnection() => GetResource();
 
-        public IEntityQueryBuilder GetQueryBuilder()
-        {
-            return new SqlServerEntityQueryBuilder();
-        }
+        public IQueryBuilder GetQueryBuilder() => _queryBuilder;
 
         protected override DbConnection CreateResource(System.Transactions.Transaction transaction = null)
         {

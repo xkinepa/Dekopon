@@ -11,26 +11,23 @@ namespace Dekopon.Repository
     public class DatabaseManager : TransactionAwareResourceManager<DbConnection>, IDatabaseResourceManager, IDatabaseManager, IDisposable
     {
         private readonly Func<DbContext> _databaseFactory;
-        private readonly IEntityQueryBuilder _entityQueryBuilder;
+        private readonly IQueryBuilder _queryBuilder;
 
-        public DatabaseManager(DbContextOptions dbContextOptions, ITransactionManager transactionManager = null, IEntityQueryBuilder entityQueryBuilder = null)
-            : this(() => new DbContext(dbContextOptions), transactionManager, entityQueryBuilder)
+        public DatabaseManager(DbContextOptions dbContextOptions, ITransactionManager transactionManager = null, IQueryBuilder queryBuilder = null)
+            : this(() => new DbContext(dbContextOptions), transactionManager, queryBuilder)
         {
         }
 
-        public DatabaseManager(Func<DbContext> databaseFactory, ITransactionManager transactionManager = null, IEntityQueryBuilder entityQueryBuilder = null)
+        public DatabaseManager(Func<DbContext> databaseFactory, ITransactionManager transactionManager = null, IQueryBuilder queryBuilder = null)
             : base(transactionManager)
         {
             _databaseFactory = databaseFactory;
-            _entityQueryBuilder = entityQueryBuilder;
+            _queryBuilder = queryBuilder;
         }
 
         public virtual IDbConnection GetConnection() => GetResource();
 
-        public IEntityQueryBuilder GetQueryBuilder()
-        {
-            return _entityQueryBuilder;
-        }
+        public IQueryBuilder GetQueryBuilder() => _queryBuilder;
 
         public override void Dispose()
         {

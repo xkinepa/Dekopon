@@ -20,7 +20,7 @@ namespace Dekopon
             {
                 using (var dbManager = new DatabaseManager(new DbContextOptionsBuilder()
                     .UseSqlServer(connectionString)
-                    .Options, txManager, entityQueryBuilder: new SqlServerEntityQueryBuilder()))
+                    .Options, txManager, queryBuilder: new SqlServerQueryBuilder()))
                 {
                     var userRepository = new UserRepository(dbManager);
                     using (var txSupport = txManager.Begin())

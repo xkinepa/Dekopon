@@ -7,6 +7,6 @@ namespace Dekopon.Repository
     {
         IDbConnection GetConnection();
 
-        IEntityQueryBuilder GetQueryBuilder();
+        IQueryBuilder GetQueryBuilder();
     }
 }
