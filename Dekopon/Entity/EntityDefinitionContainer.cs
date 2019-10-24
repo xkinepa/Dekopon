@@ -39,26 +39,24 @@ namespace Dekopon.Entity
                     Key = p.GetCustomAttribute<KeyAttribute>(true),
                     Generated = p.GetCustomAttribute<GeneratedAttribute>(true),
                     Convert = p.GetCustomAttribute<ConvertAttribute>(true),
-                });
+                }).Select(it => new ColumnDefinition
+                {
+                    Property = it.Property,
+                    Getter = it.Property.CanRead ? GetGetter(type, it.Property) : null,
+                    Setter = it.Property.CanWrite ? GetSetter(type, it.Property) : null,
+                    Name = it.Column?.Name ?? it.Property.Name,
+                    Convert = it.Convert?.Pattern,
+                    Generated = it.Generated != null,
+                    Key = it.Key != null,
+                    Id = it.Key?.IsIdentity ?? false,
+                }).ToImmutableList();
                 var definition = new EntityDefinition
                 {
                     Type = type,
                     Table = table?.Name ?? type.Name,
                     Where = where?.Clause,
                     SetForDelete = delete?.Set,
-                    Columns = properties
-                        .Select(it => new ColumnDefinition
-                        {
-                            Property = it.Property,
-                            Getter = it.Property.CanRead ? GetGetter(type, it.Property) : null,
-                            Setter = it.Property.CanWrite ? GetSetter(type, it.Property) : null,
-                            Name = it.Column?.Name ?? it.Property.Name,
-                            Convert = it.Convert?.Pattern,
-                            Generated = it.Generated != null,
-                            Key = it.Key != null,
-                            Id = it.Key?.IsIdentity ?? false,
-                        })
-                        .ToImmutableList(),
+                    Columns = properties,
                 };
 
                 definition.IdColumn = definition.Columns.SingleOrDefault(it => it.Id);
