@@ -12,19 +12,19 @@ namespace Dekopon.Repository
         {
         }
 
-        public IList<T> FindAll(IList<T> entities)
+        public virtual IList<T> FindAll(IList<T> entities)
         {
             var (query, parameters) = QueryBuilder.FindAll(EntityDefinition, entities);
             return Conn.Query<T>(query, parameters).ToList();
         }
 
-        public T Get(T entity)
+        public virtual T Get(T entity)
         {
             var (query, parameters) = QueryBuilder.Find(EntityDefinition, entity);
             return Conn.QuerySingleOrDefault<T>(query, parameters);
         }
 
-        public long Add(T entity)
+        public virtual long Add(T entity)
         {
             var (query, @params) = QueryBuilder.Insert(EntityDefinition, entity);
             var id = Conn.ExecuteScalar<long>(query, @params);
@@ -36,7 +36,7 @@ namespace Dekopon.Repository
             return id;
         }
 
-        public int AddAll(IList<T> entities, int chunk = 100)
+        public virtual int AddAll(IList<T> entities, int chunk = 100)
         {
             return Chunk(entities, chunk).Select(it =>
             {
@@ -45,13 +45,13 @@ namespace Dekopon.Repository
             }).Sum();
         }
 
-        public int Update(T entity)
+        public virtual int Update(T entity)
         {
             var (query, parameters) = QueryBuilder.Update(EntityDefinition, entity);
             return Conn.Execute(query, parameters);
         }
 
-        public int UpdateAll(IList<T> entities, int chunk = 100)
+        public virtual int UpdateAll(IList<T> entities, int chunk = 100)
         {
             return Chunk(entities, chunk).Select(it =>
             {
@@ -60,25 +60,25 @@ namespace Dekopon.Repository
             }).Sum();
         }
 
-        public int Delete(T entity)
+        public virtual int Delete(T entity)
         {
             var (query, parameters) = QueryBuilder.Delete(EntityDefinition, entity);
             return Conn.Execute(query, parameters);
         }
 
-        public int DeleteAll(IList<T> entities)
+        public virtual int DeleteAll(IList<T> entities)
         {
             var (query, parameters) = QueryBuilder.DeleteAll(EntityDefinition, entities);
             return Conn.Execute(query, parameters);
         }
 
-        public IList<T> FindByIdIn(IList<long> ids) => FindAll(ids.Select(CreateEntity).ToList());
+        public virtual IList<T> FindByIdIn(IList<long> ids) => FindAll(ids.Select(CreateEntity).ToList());
 
-        public T GetById(long id) => Get(CreateEntity(id));
+        public virtual T GetById(long id) => Get(CreateEntity(id));
 
-        public int DeleteById(long id) => Delete(CreateEntity(id));
+        public virtual int DeleteById(long id) => Delete(CreateEntity(id));
 
-        public int DeleteByIdIn(IList<long> ids) => DeleteAll(ids.Select(CreateEntity).ToList());
+        public virtual int DeleteByIdIn(IList<long> ids) => DeleteAll(ids.Select(CreateEntity).ToList());
 
         private T CreateEntity(long id)
         {
