@@ -32,7 +32,7 @@ namespace Dekopon.Dapper
                     break;
                 }
 
-                if (type != typeof(SqlMapper.TypeHandler<>))
+                if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(SqlMapper.TypeHandler<>))
                 {
                     continue;
                 }
