@@ -18,9 +18,12 @@ namespace Dekopon
 
             using (var txManager = new TransactionManager())
             {
-                using (var dbManager = new DatabaseManager(new DbContextOptionsBuilder()
-                    .UseSqlServer(connectionString)
-                    .Options, txManager, queryBuilder: new SqlServerQueryBuilder()))
+                using (var dbManager = DatabaseManager.NewBuilder(new DbContextOptionsBuilder()
+                        .UseSqlServer(connectionString)
+                        .Options)
+                    .SetTransactionManager(txManager)
+                    .SetQueryBuilder(new SqlServerQueryBuilder())
+                    .Build())
                 {
                     var userRepository = new UserRepository(dbManager);
                     using (var txSupport = txManager.Begin())

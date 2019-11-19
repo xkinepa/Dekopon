@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using Dekopon.Miscs;
+using Dekopon.Profiler;
 using Dekopon.QueryBuilder;
 using Dekopon.Transaction;
 
@@ -13,14 +14,22 @@ namespace Dekopon.Repository
         private readonly IConnectionProvider _connectionProvider;
         private readonly string _connectionString;
 
+        private readonly IDbProfiler _dbProfiler;
         private readonly IQueryBuilder _queryBuilder;
 
-        public SqlConnectionManager(string connectionString, ITransactionManager transactionManager = null,
-            SqlConnectionProvider connectionProvider = null, SqlServerQueryBuilder queryBuilder = null)
+        public static Builder NewBuilder(string connectionString)
+        {
+            return new Builder(connectionString);
+        }
+
+        public SqlConnectionManager(string connectionString, IConnectionProvider connectionProvider = null,
+            ITransactionManager transactionManager = null, IDbProfiler dbProfiler = null, IQueryBuilder queryBuilder = null)
             : base(transactionManager)
         {
-            _connectionString = connectionString;
             _connectionProvider = connectionProvider ?? new SqlConnectionProvider();
+            _connectionString = connectionString;
+
+            _dbProfiler = dbProfiler;
             _queryBuilder = queryBuilder ?? new SqlServerQueryBuilder();
         }
 
@@ -32,7 +41,29 @@ namespace Dekopon.Repository
         {
             var dbConnection = _connectionProvider.CreateConnection(_connectionString);
             dbConnection.EnlistTransaction(transaction);
-            return dbConnection;
+            return _dbProfiler != null ? _dbProfiler.Profile(dbConnection) : dbConnection;
+        }
+
+        public class Builder : AbstractDatabaseManagerBuilder<Builder>
+        {
+            private readonly string _connectionString;
+            private IConnectionProvider _connectionProvider;
+
+            public Builder(string connectionString)
+            {
+                _connectionString = connectionString;
+            }
+
+            public Builder SetConnectionProvider(IConnectionProvider connectionProvider)
+            {
+                _connectionProvider = connectionProvider;
+                return this;
+            }
+
+            public override IDatabaseManager Build()
+            {
+                return new SqlConnectionManager(_connectionString, _connectionProvider, TransactionManager, DbProfiler, QueryBuilder);
+            }
         }
     }
 
