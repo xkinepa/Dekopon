@@ -27,6 +27,6 @@ namespace Dekopon.Entity
         public bool Id { get; internal set; }
 
         public bool Insert => !Generated;
-        public bool Update => !Key;
+        public bool Update => !Key && !Generated;
     }
 }
