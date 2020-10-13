@@ -11,12 +11,16 @@ namespace Dekopon.Repository
     {
         protected EntityDefinition EntityDefinition { get; }
 
+        protected IEntityQueryBuilder QueryBuilder { get; }
+
         protected string TableName => QueryBuilder.Table(EntityDefinition);
         protected string AllColumnNames => QueryBuilder.Columns(EntityDefinition);
+        protected string WhereClause => QueryBuilder.Where(EntityDefinition);
 
         protected RepositoryBase(IDatabaseManager databaseManager) : base(databaseManager)
         {
             EntityDefinition = EntityDefinitionContainer.Instance.Get(typeof(T));
+            QueryBuilder = (IEntityQueryBuilder) databaseManager.GetQueryBuilder();
         }
 
         public virtual IList<T> FindAll()
@@ -30,12 +34,9 @@ namespace Dekopon.Repository
     {
         private readonly IDatabaseManager _databaseManager;
 
-        protected IQueryBuilder QueryBuilder { get; }
-
         protected RepositoryBase(IDatabaseManager databaseManager)
         {
             _databaseManager = databaseManager;
-            QueryBuilder = databaseManager.GetQueryBuilder();
         }
 
         protected IDbConnection Conn => _databaseManager.GetConnection();

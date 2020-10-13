@@ -15,5 +15,7 @@ namespace Dekopon.Attributes
         }
 
         public string Name { get; set; }
+
+        public string DbType { get; set; }
     }
 }

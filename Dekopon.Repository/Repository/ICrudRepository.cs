@@ -5,6 +5,7 @@ namespace Dekopon.Repository
     public interface ICrudRepository<T> : IRepository<T>
     {
         IList<T> FindAll(IList<T> entities);
+
         T Get(T entity);
 
         long Add(T entity);
@@ -17,6 +18,7 @@ namespace Dekopon.Repository
         int DeleteAll(IList<T> entities);
 
         IList<T> FindByIdIn(IList<long> ids);
+        T Get(long id);
         T GetById(long id);
         int DeleteById(long id);
         int DeleteByIdIn(IList<long> ids);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -45,6 +46,7 @@ namespace Dekopon.Entity
                     Getter = it.Property.CanRead ? GetGetter(type, it.Property) : null,
                     Setter = it.Property.CanWrite ? GetSetter(type, it.Property) : null,
                     Name = it.Column?.Name ?? it.Property.Name,
+                    DbType = it.Column?.DbType,
                     Convert = it.Convert?.Pattern,
                     Generated = it.Generated != null,
                     Key = it.Key != null,
@@ -91,6 +93,17 @@ namespace Dekopon.Entity
                 setParamObj, setParamVal
             );
             return setterExpr.Compile();
+        }
+
+        private SqlDbType? ParseDbType(string type)
+        {
+            if (string.IsNullOrEmpty(type))
+            {
+                return null;
+            }
+
+            Assertion.IsTrue(Enum.TryParse<SqlDbType>(type, true, out var dbType), $"could not parse dbType value: {type}");
+            return dbType;
         }
     }
 }

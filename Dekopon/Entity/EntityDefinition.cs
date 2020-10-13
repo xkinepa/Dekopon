@@ -21,6 +21,7 @@ namespace Dekopon.Entity
         public string Name { get; internal set; }
         public Func<object, object> Getter { get; internal set; }
         public Action<object, object> Setter { get; internal set; }
+        public string DbType { get; set; }
         public string Convert { get; internal set; }
         public bool Generated { get; internal set; } // w/ [Generated]
         public bool Key { get; internal set; } // w/ [Key]

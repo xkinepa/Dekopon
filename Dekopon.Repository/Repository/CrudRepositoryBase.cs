@@ -1,32 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Dekopon.Miscs;
 using Dapper;
+using Dekopon.QueryBuilder;
 
 namespace Dekopon.Repository
 {
     public abstract class CrudRepositoryBase<T> : RepositoryBase<T>, ICrudRepository<T>
     {
+        static CrudRepositoryBase()
+        {
+            var type = typeof(T);
+            Assertion.IsTrue(!type.IsArray);
+            Assertion.IsTrue(!type.IsGenericType || !type.GetTypeInfo().ImplementedInterfaces.Any(it => it.IsGenericType && it.GetGenericTypeDefinition() == typeof(IEnumerable<>)));
+        }
+
+        protected ICrudEntityQueryBuilder CrudQueryBuilder => (ICrudEntityQueryBuilder) QueryBuilder;
+
         protected CrudRepositoryBase(IDatabaseManager databaseManager) : base(databaseManager)
         {
         }
 
         public virtual IList<T> FindAll(IList<T> entities)
         {
-            var (query, parameters) = QueryBuilder.FindAll(EntityDefinition, entities);
-            return Conn.Query<T>(query, parameters).ToList();
+            var (query, @params) = CrudQueryBuilder.FindAll(EntityDefinition, entities);
+            return Conn.Query<T>(query, @params).ToList();
         }
 
         public virtual T Get(T entity)
         {
-            var (query, parameters) = QueryBuilder.Find(EntityDefinition, entity);
-            return Conn.QuerySingleOrDefault<T>(query, parameters);
+            var (query, @params) = CrudQueryBuilder.Find(EntityDefinition, entity);
+            return Conn.QuerySingleOrDefault<T>(query, @params);
         }
 
         public virtual long Add(T entity)
         {
-            var (query, @params) = QueryBuilder.Insert(EntityDefinition, entity);
+            var (query, @params) = CrudQueryBuilder.Insert(EntityDefinition, entity);
             var id = Conn.ExecuteScalar<long>(query, @params);
             if (id > 0)
             {
@@ -40,39 +51,41 @@ namespace Dekopon.Repository
         {
             return Chunk(entities, chunk).Select(it =>
             {
-                var (query, parameters) = QueryBuilder.InsertAll(EntityDefinition, it);
-                return Conn.Execute(query, parameters);
+                var (query, @params) = CrudQueryBuilder.InsertAll(EntityDefinition, it);
+                return Conn.Execute(query, @params);
             }).Sum();
         }
 
         public virtual int Update(T entity)
         {
-            var (query, parameters) = QueryBuilder.Update(EntityDefinition, entity);
-            return Conn.Execute(query, parameters);
+            var (query, @params) = CrudQueryBuilder.Update(EntityDefinition, entity);
+            return Conn.Execute(query, @params);
         }
 
         public virtual int UpdateAll(IList<T> entities, int chunk = 100)
         {
             return Chunk(entities, chunk).Select(it =>
             {
-                var (query, parameters) = QueryBuilder.UpdateAll(EntityDefinition, it);
-                return Conn.Execute(query, parameters);
+                var (query, @params) = CrudQueryBuilder.UpdateAll(EntityDefinition, it);
+                return Conn.Execute(query, @params);
             }).Sum();
         }
 
         public virtual int Delete(T entity)
         {
-            var (query, parameters) = QueryBuilder.Delete(EntityDefinition, entity);
-            return Conn.Execute(query, parameters);
+            var (query, @params) = CrudQueryBuilder.Delete(EntityDefinition, entity);
+            return Conn.Execute(query, @params);
         }
 
         public virtual int DeleteAll(IList<T> entities)
         {
-            var (query, parameters) = QueryBuilder.DeleteAll(EntityDefinition, entities);
-            return Conn.Execute(query, parameters);
+            var (query, @params) = CrudQueryBuilder.DeleteAll(EntityDefinition, entities);
+            return Conn.Execute(query, @params);
         }
 
         public virtual IList<T> FindByIdIn(IList<long> ids) => FindAll(ids.Select(CreateEntity).ToList());
+
+        public virtual T Get(long id) => GetById(id);
 
         public virtual T GetById(long id) => Get(CreateEntity(id));
 

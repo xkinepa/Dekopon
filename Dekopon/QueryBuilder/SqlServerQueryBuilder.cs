@@ -8,15 +8,25 @@ using Dekopon.Miscs;
 
 namespace Dekopon.QueryBuilder
 {
-    public class SqlServerQueryBuilder : IQueryBuilder, IEntityQueryBuilder
+    public class SqlServerQueryBuilder : IQueryBuilder, IEntityQueryBuilder, ICrudEntityQueryBuilder
     {
         private static readonly ConcurrentDictionary<(Type, string), string[]> QueryTemplates = new ConcurrentDictionary<(Type, string), string[]>();
+
+        public virtual string Paging(string query, string orderBy = null)
+        {
+            return $@"select * from ({query}) as q {orderBy ?? "order by current_timestamp"} OFFSET @start ROWS FETCH NEXT @count ROWS ONLY";
+        }
+
+        public virtual string Counting(string query)
+        {
+            return $"select count(0) from ({query}) as q";
+        }
 
         public string Table(EntityDefinition entityDefinition) => TableName(entityDefinition);
 
         public string Columns(EntityDefinition entityDefinition) => Join(entityDefinition.Columns.Select(ColumnName));
 
-        public (string, IDictionary<string, object>) FindAll(EntityDefinition entityDefinition)
+        public (string Query, ParameterContainer Params) FindAll(EntityDefinition entityDefinition)
         {
             var query = QueryTemplates.GetOrAdd(
                 (entityDefinition.Type, $"{nameof(FindAll)}({nameof(EntityDefinition)})"),
@@ -37,10 +47,10 @@ namespace Dekopon.QueryBuilder
                     };
                 });
 
-            return (query[0], new Dictionary<string, object>());
+            return (query[0], new ParameterContainer());
         }
 
-        public (string, IDictionary<string, object>) Find(EntityDefinition entityDefinition, object entity)
+        public (string Query, ParameterContainer Params) Find(EntityDefinition entityDefinition, object entity)
         {
             Assertion.NotNull(entity, $"{nameof(entity)} should be specified");
 
@@ -59,7 +69,7 @@ namespace Dekopon.QueryBuilder
                         if (columnDefinition.Key)
                         {
                             var propertyName = PropertyName(columnDefinition);
-                            wheres.Add($"{ConvertText(columnName, columnDefinition.Convert)} = {propertyName}");
+                            wheres.Add($"{ConvertText(columnName, columnDefinition.Convert)} = {CastProperty(propertyName, columnDefinition.DbType)}");
                         }
                     }
 
@@ -74,7 +84,7 @@ namespace Dekopon.QueryBuilder
             return (query[0], BuildParameter(entityDefinition, it => it.Key, entity));
         }
 
-        public (string, IDictionary<string, object>) FindAll(EntityDefinition entityDefinition, IEnumerable entities)
+        public (string Query, ParameterContainer Params) FindAll(EntityDefinition entityDefinition, IEnumerable entities)
         {
             Assertion.NotNull(entities, $"{nameof(entities)} should be specified");
 
@@ -100,7 +110,7 @@ namespace Dekopon.QueryBuilder
 
                     AssertionNotEmpty(columns, $"entity has no columns");
                     AssertionNotEmpty(ons, $"entity has no key columns");
-                    return new []
+                    return new[]
                     {
                         $@"select {Join(columns)} from {tableName} join (values ",
                         $@") as data({Join(keyColumns)}) on {Join(ons, " and ")};",
@@ -111,7 +121,7 @@ namespace Dekopon.QueryBuilder
             return ($"{query[0]}{values}{query[1]}", parameters);
         }
 
-        public (string, IDictionary<string, object>) Insert(EntityDefinition entityDefinition, object entity)
+        public (string Query, ParameterContainer Params) Insert(EntityDefinition entityDefinition, object entity)
         {
             Assertion.NotNull(entity, $"{nameof(entity)} should be specified");
 
@@ -126,7 +136,7 @@ namespace Dekopon.QueryBuilder
                         var columnName = ColumnName(columnDefinition);
                         var propertyName = PropertyName(columnDefinition);
                         columns.Add(columnName);
-                        values.Add(propertyName);
+                        values.Add(CastProperty(propertyName, columnDefinition.DbType));
                     }
 
                     AssertionNotEmpty(columns, $"entity has no insert columns");
@@ -140,7 +150,7 @@ select convert(bigint, scope_identity()) as [identity];",
             return (query[0], BuildParameter(entityDefinition, it => it.Insert, entity));
         }
 
-        public (string, IDictionary<string, object>) InsertAll(EntityDefinition entityDefinition, IEnumerable entities)
+        public (string Query, ParameterContainer Params) InsertAll(EntityDefinition entityDefinition, IEnumerable entities)
         {
             Assertion.NotNull(entities, $"{nameof(entities)} should be specified");
 
@@ -167,7 +177,7 @@ select convert(bigint, scope_identity()) as [identity];",
             return ($"{query[0]}{values}{query[1]}", parameters);
         }
 
-        public (string, IDictionary<string, object>) Update(EntityDefinition entityDefinition, object entity)
+        public (string Query, ParameterContainer Params) Update(EntityDefinition entityDefinition, object entity)
         {
             Assertion.NotNull(entity, $"{nameof(entity)} should be specified");
 
@@ -184,18 +194,18 @@ select convert(bigint, scope_identity()) as [identity];",
 
                         if (columnDefinition.Key)
                         {
-                            wheres.Add($"{ConvertText(columnName, columnDefinition.Convert)} = {propertyName}");
+                            wheres.Add($"{ConvertText(columnName, columnDefinition.Convert)} = {CastProperty(propertyName, columnDefinition.DbType)}");
                         }
-                        
+
                         if (columnDefinition.Update)
                         {
-                            sets.Add($"{columnName} = {propertyName}");
+                            sets.Add($"{columnName} = {CastProperty(propertyName, columnDefinition.DbType)}");
                         }
                     }
 
                     AssertionNotEmpty(sets, $"entity has no update columns");
                     AssertionNotEmpty(wheres, $"entity has no key columns");
-                    return new []
+                    return new[]
                     {
                         $"update {TableName(entityDefinition)} set {Join(sets)} where {Join(wheres, " and ")};",
                     };
@@ -204,7 +214,7 @@ select convert(bigint, scope_identity()) as [identity];",
             return (query[0], BuildParameter(entityDefinition, it => it.Key || it.Update, entity));
         }
 
-        public (string, IDictionary<string, object>) UpdateAll(EntityDefinition entityDefinition, IEnumerable entities)
+        public (string Query, ParameterContainer Params) UpdateAll(EntityDefinition entityDefinition, IEnumerable entities)
         {
             Assertion.NotNull(entities, $"{nameof(entities)} should be specified");
 
@@ -224,7 +234,7 @@ select convert(bigint, scope_identity()) as [identity];",
                         {
                             ons.Add($"{ConvertText($"{TableName(entityDefinition)}.{columnName}", columnDefinition.Convert)} = data.{columnName}");
                         }
-                        
+
                         if (columnDefinition.Update)
                         {
                             sets.Add($"{columnName} = data.{columnName}");
@@ -244,7 +254,7 @@ select convert(bigint, scope_identity()) as [identity];",
             return ($"{query[0]}{values}{query[1]}", parameters);
         }
 
-        public (string, IDictionary<string, object>) Delete(EntityDefinition entityDefinition, object entity)
+        public (string Query, ParameterContainer Params) Delete(EntityDefinition entityDefinition, object entity)
         {
             Assertion.NotNull(entity, $"{nameof(entity)} should be specified");
 
@@ -257,7 +267,7 @@ select convert(bigint, scope_identity()) as [identity];",
                     {
                         var columnName = ColumnName(columnDefinition);
                         var propertyName = PropertyName(columnDefinition);
-                        wheres.Add($"{ConvertText(columnName, columnDefinition.Convert)} = {propertyName}");
+                        wheres.Add($"{ConvertText(columnName, columnDefinition.Convert)} = {CastProperty(propertyName, columnDefinition.DbType)}");
                     }
 
                     AssertionNotEmpty(wheres, $"entity has no key columns");
@@ -272,7 +282,7 @@ select convert(bigint, scope_identity()) as [identity];",
             return (query[0], BuildParameter(entityDefinition, it => it.Key, entity));
         }
 
-        public (string, IDictionary<string, object>) DeleteAll(EntityDefinition entityDefinition, IEnumerable entities)
+        public (string Query, ParameterContainer Params) DeleteAll(EntityDefinition entityDefinition, IEnumerable entities)
         {
             Assertion.NotNull(entities, $"{nameof(entities)} should be specified");
 
@@ -304,9 +314,9 @@ select convert(bigint, scope_identity()) as [identity];",
             return ($"{query[0]}{values}{query[1]}", parameters);
         }
 
-        public IDictionary<string, object> BuildParameter(EntityDefinition entityDefinition, Func<ColumnDefinition, bool> columnFilter, object entity)
+        public ParameterContainer BuildParameter(EntityDefinition entityDefinition, Func<ColumnDefinition, bool> columnFilter, object entity)
         {
-            var parameters = new Dictionary<string, object>();
+            var parameters = new ParameterContainer();
             foreach (var columnDefinition in entityDefinition.Columns.Where(columnFilter))
             {
                 var propertyName = PropertyName(columnDefinition);
@@ -317,11 +327,11 @@ select convert(bigint, scope_identity()) as [identity];",
             return parameters;
         }
 
-        private (string, IDictionary<string, object>) BuildValues(EntityDefinition entityDefinition, Func<ColumnDefinition, bool> columnFilter, IEnumerable entities)
+        private (string Query, ParameterContainer Params) BuildValues(EntityDefinition entityDefinition, Func<ColumnDefinition, bool> columnFilter, IEnumerable entities)
         {
             var i = 0;
             var valuesList = Enumerables.List<string>();
-            var parameters = new Dictionary<string, object>();
+            var parameters = new ParameterContainer();
             foreach (var entity in entities)
             {
                 var index = i++;
@@ -341,7 +351,7 @@ select convert(bigint, scope_identity()) as [identity];",
             return (Join(valuesList), parameters);
         }
 
-        private string Where(EntityDefinition entity)
+        public string Where(EntityDefinition entity)
         {
             if (!string.IsNullOrEmpty(entity.Where))
             {
@@ -386,6 +396,16 @@ select convert(bigint, scope_identity()) as [identity];",
             return text;
         }
 
+        private string CastProperty(string property, string dbType)
+        {
+            if (!string.IsNullOrEmpty(dbType))
+            {
+                return $"cast({property} as {dbType})";
+            }
+
+            return property;
+        }
+
         private object GetValue(ColumnDefinition column, object entity)
         {
             return (entity != null && column.Getter != null) ? column.Getter.Invoke(entity) : DBNull.Value;
@@ -406,6 +426,18 @@ select convert(bigint, scope_identity()) as [identity];",
             }
 
             Assertion.IsTrue(!empty, message);
+        }
+    }
+
+    public class SqlServer08QueryBuilder : SqlServerQueryBuilder
+    {
+        public override string Paging(string query, string orderBy = null)
+        {
+            return $@"select * from (
+    select *, row_number() over ({orderBy ?? "order by current_timestamp"}) as _rn from (
+        {query} 
+    ) as q
+) as q where _rn between @start + 1 and @start + @count order by _rn asc";
         }
     }
 }

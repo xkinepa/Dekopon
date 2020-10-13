@@ -43,6 +43,15 @@ namespace Dekopon.Miscs
             }
         }
 
+        [ContractAnnotation("expression: true => halt")]
+        public static void IsFalse(bool expression, string message = null)
+        {
+            if (expression)
+            {
+                throw new AssertionException(message);
+            }
+        }
+
         [ContractAnnotation("obj: notnull => halt")]
         public static void IsNull(object obj, string message = null)
         {
