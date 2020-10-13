@@ -4,9 +4,9 @@ namespace Dekopon.Transaction
 {
     public interface ITransactionSupport : IDisposable
     {
-        void Complete();
+        string TransactionId { get; }
 
-        [Obsolete]
+        void Complete();
         void Rollback();
     }
 }

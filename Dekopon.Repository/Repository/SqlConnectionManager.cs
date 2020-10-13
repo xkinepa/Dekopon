@@ -16,6 +16,7 @@ namespace Dekopon.Repository
 
         private readonly IDbProfiler _dbProfiler;
         private readonly IQueryBuilder _queryBuilder;
+        private readonly Action<IDbConnection> _afterCreatedAction;
 
         public static Builder NewBuilder(string connectionString)
         {
@@ -23,7 +24,8 @@ namespace Dekopon.Repository
         }
 
         public SqlConnectionManager(string connectionString, IConnectionProvider connectionProvider = null,
-            ITransactionManager transactionManager = null, IDbProfiler dbProfiler = null, IQueryBuilder queryBuilder = null)
+            ITransactionManager transactionManager = null, IDbProfiler dbProfiler = null, IQueryBuilder queryBuilder = null,
+            Action<IDbConnection> afterCreatedAction = null)
             : base(transactionManager)
         {
             _connectionProvider = connectionProvider ?? new SqlConnectionProvider();
@@ -31,6 +33,7 @@ namespace Dekopon.Repository
 
             _dbProfiler = dbProfiler;
             _queryBuilder = queryBuilder ?? new SqlServerQueryBuilder();
+            _afterCreatedAction = afterCreatedAction ?? (_ => { });
         }
 
         public virtual IDbConnection GetConnection() => GetResource();
@@ -39,9 +42,15 @@ namespace Dekopon.Repository
 
         protected override DbConnection CreateResource(System.Transactions.Transaction transaction = null)
         {
-            var dbConnection = _connectionProvider.CreateConnection(_connectionString);
-            dbConnection.EnlistTransaction(transaction);
-            return _dbProfiler != null ? _dbProfiler.Profile(dbConnection) : dbConnection;
+            var connection = _connectionProvider.CreateConnection(_connectionString);
+            connection.EnlistTransaction(transaction);
+            if (_dbProfiler != null)
+            {
+                connection = _dbProfiler.Profile(connection, transaction);
+            }
+
+            _afterCreatedAction?.Invoke(connection);
+            return connection;
         }
 
         public class Builder : AbstractDatabaseManagerBuilder<Builder>
@@ -62,7 +71,7 @@ namespace Dekopon.Repository
 
             public override IDatabaseManager Build()
             {
-                return new SqlConnectionManager(_connectionString, _connectionProvider, TransactionManager, DbProfiler, QueryBuilder);
+                return new SqlConnectionManager(_connectionString, _connectionProvider, TransactionManager, DbProfiler, QueryBuilder, AfterCreatedAction);
             }
         }
     }

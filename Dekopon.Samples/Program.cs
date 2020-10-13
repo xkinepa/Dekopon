@@ -18,7 +18,7 @@ namespace Dekopon
 
             using (var txManager = new TransactionManager())
             {
-                using (var dbManager = DatabaseManager.NewBuilder(new DbContextOptionsBuilder()
+                using (var dbManager = (DatabaseManager) DatabaseManager.NewBuilder(new DbContextOptionsBuilder()
                         .UseSqlServer(connectionString)
                         .Options)
                     .SetTransactionManager(txManager)

@@ -14,6 +14,7 @@ namespace Dekopon.Repository
         private readonly Func<DbContext> _databaseFactory;
         private readonly IDbProfiler _dbProfiler;
         private readonly IQueryBuilder _queryBuilder;
+        private readonly Action<IDbConnection> _afterCreatedAction;
 
         public static Builder NewBuilder(DbContextOptions dbContextOptions)
         {
@@ -26,12 +27,14 @@ namespace Dekopon.Repository
         }
 
         public DatabaseManager(Func<DbContext> databaseFactory,
-            ITransactionManager transactionManager = null, IDbProfiler dbProfiler = null, IQueryBuilder queryBuilder = null)
+            ITransactionManager transactionManager = null, IDbProfiler dbProfiler = null, IQueryBuilder queryBuilder = null,
+            Action<IDbConnection> afterCreatedAction = null)
             : base(transactionManager)
         {
             _databaseFactory = databaseFactory;
             _dbProfiler = dbProfiler;
             _queryBuilder = queryBuilder;
+            _afterCreatedAction = afterCreatedAction;
         }
 
         public virtual IDbConnection GetConnection() => GetResource();
@@ -49,7 +52,13 @@ namespace Dekopon.Repository
             dbContext.Database.OpenConnection(); // open then enlist
             dbContext.Database.EnlistTransaction(transaction); // check null
             var connection = dbContext.Database.GetDbConnection();
-            return _dbProfiler != null ? _dbProfiler.Profile(connection) : connection;
+            if (_dbProfiler != null)
+            {
+                connection = _dbProfiler.Profile(connection, transaction);
+            }
+
+            _afterCreatedAction?.Invoke(connection);
+            return connection;
         }
 
         public class Builder : AbstractDatabaseManagerBuilder<Builder>
@@ -68,7 +77,7 @@ namespace Dekopon.Repository
 
             public override IDatabaseManager Build()
             {
-                return new DatabaseManager(_databaseFactory, TransactionManager, DbProfiler, QueryBuilder);
+                return new DatabaseManager(_databaseFactory, TransactionManager, DbProfiler, QueryBuilder, AfterCreatedAction);
             }
         }
     }

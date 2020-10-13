@@ -1,27 +1,34 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Transactions;
 using Dekopon.Miscs;
 
 namespace Dekopon.Transaction
 {
+    public interface IResourceManager<out T> where T : IDisposable
+    {
+        T GetResource();
+    }
+
     public abstract class TransactionAwareResourceManager<T> : IResourceManager<T>, IDisposable where T : IDisposable
     {
-        private volatile bool _disposed = false;
-        private readonly ConcurrentDictionary<string, T> _container = new ConcurrentDictionary<string, T>();
+        private readonly ConcurrentDictionary<string, T> _resourceContainer = new ConcurrentDictionary<string, T>();
+        private readonly Lazy<T> _resourceWithoutTransaction;
 
         private readonly ITransactionManager _transactionManager;
 
-        private readonly Lazy<T> _resourceWithoutTransaction;
+        private bool _disposed = false;
 
         protected TransactionAwareResourceManager(ITransactionManager transactionManager)
         {
-            _resourceWithoutTransaction = new Lazy<T>(() => CreateResource(null));
+            _resourceWithoutTransaction = new Lazy<T>(() => CreateResource());
             _transactionManager = transactionManager;
         }
 
         public T GetResource()
         {
-            Assertion.IsTrue(!_disposed, $"already disposed");
+            Assertion.IsFalse(_disposed, $"already disposed");
+
             var transaction = _transactionManager?.Current;
             return transaction != null ? GetOrAdd(transaction) : _resourceWithoutTransaction.Value;
         }
@@ -30,29 +37,31 @@ namespace Dekopon.Transaction
         {
             _disposed = true;
 
+            foreach (var disposable in _resourceContainer.Values)
+            {
+                disposable.Dispose();
+            }
+
             if (_resourceWithoutTransaction.IsValueCreated)
             {
                 _resourceWithoutTransaction.Value.Dispose();
             }
 
-            foreach (var disposable in _container.Values)
-            {
-                disposable.Dispose();
-            }
+            _resourceContainer.Clear();
         }
 
         protected abstract T CreateResource(System.Transactions.Transaction transaction = null);
 
         private T GetOrAdd(System.Transactions.Transaction transaction)
         {
-            Assertion.NotNull(transaction, $"transaction should be specified");
+            Assertion.NotNull(transaction, $"{nameof(transaction)} should be specified");
 
             var identifier = GetIdentifier(transaction);
-            return _container.GetOrAdd(identifier, i =>
+            return _resourceContainer.GetOrAdd(identifier, i =>
             {
                 transaction.TransactionCompleted += (sender, args) =>
                 {
-                    if (_container.TryRemove(i, out var resource))
+                    if (_resourceContainer.TryRemove(i, out var resource))
                     {
                         resource.Dispose();
                     }
@@ -66,10 +75,5 @@ namespace Dekopon.Transaction
         {
             return transaction.TransactionInformation.LocalIdentifier;
         }
-    }
-
-    public interface IResourceManager<out T> where T : IDisposable
-    {
-        T GetResource();
     }
 }

@@ -6,18 +6,19 @@ using Dekopon.Transaction;
 
 namespace Dekopon.Repository
 {
-    public interface IDatabaseManager : IDisposable
+    public interface IDatabaseManager
     {
         IDbConnection GetConnection();
 
         IQueryBuilder GetQueryBuilder();
     }
 
-     public abstract class AbstractDatabaseManagerBuilder<TBuilder> where TBuilder : AbstractDatabaseManagerBuilder<TBuilder>
+    public abstract class AbstractDatabaseManagerBuilder<TBuilder> where TBuilder : AbstractDatabaseManagerBuilder<TBuilder>
     {
         protected ITransactionManager TransactionManager;
         protected IDbProfiler DbProfiler;
         protected IQueryBuilder QueryBuilder;
+        protected Action<IDbConnection> AfterCreatedAction;
 
         public abstract IDatabaseManager Build();
 
@@ -36,6 +37,12 @@ namespace Dekopon.Repository
         public TBuilder SetQueryBuilder(IQueryBuilder queryBuilder)
         {
             QueryBuilder = queryBuilder;
+            return (TBuilder)this;
+        }
+
+        public TBuilder AfterCreated(Action<IDbConnection> afterCreatedAction)
+        {
+            AfterCreatedAction = afterCreatedAction;
             return (TBuilder)this;
         }
     }
