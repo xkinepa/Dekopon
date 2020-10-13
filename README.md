@@ -100,11 +100,17 @@ The return tuple contains query and parameters, which can be passed to Dapper qu
 
 > You can create `XyzRepository` from non-generic `RepositoryBase` without entities.
 
-### Transaction and Connection lifecycle
-`TransactionManager` simply wraps `TransactionScope`.
-When `RepositoryBase.Conn` or `IDatabaseManager.GetConnection()` is invoked, Dekopon will check if `Transaction.Current` exists:
+### Transaction and Connection lifecycle (Breaking changed)
+There're 3 `TransactionManager` provided.
++ `DtcTransactionManager` simply wraps `TransactionScope`, has to be singleton and will affect all resources;
++ `TransactionManager` uses `ThreadLocal` to hold transaction info, multiple instances can be created with different resources;
++ `FlowableTransactionManager` uses `AsyncLocal` to hold transaction info, so async methods are allowed to use within your code;
+
+`DtcTransactionManager` and `FlowableTransactionManager` are suggested to use.
+
+When `RepositoryBase.Conn` or `IDatabaseManager.GetConnection()` is invoked, Dekopon will check if any transaction info held in context:
 * If no transaction exists, a new connection will be opened/reused and live along with the `IDatabaseManager`;
-* If transaction exists, a new connection will be opened/reused and live along with the `transaction.TransactionCompleted`.
+* If transaction exists, a new connection will be opened/reused and live along with the txSupport.
 
 You can create nested txSupport with different isolation and propagation parameters.
 See `TransactionAwareResourceManager` for details.
@@ -112,7 +118,7 @@ See `TransactionAwareResourceManager` for details.
 So, the order of `new UserRepository()` and `txManager.Begin()` doesn't matter, you can define your custom [TransactionalAttribute] with AOP frameworks.
 
 ```csharp
-    using (var txManager = new TransactionManager()) // txManager should be singleton
+    using (var txManager = new FlowableTransactionManager())
     using (var dbManager = new DatabaseManager(new DbContextOptionsBuilder()
         .UseSqlServer(connectionString)
         .Options, txManager, entityQueryBuilder: new SqlServerEntityQueryBuilder()))
@@ -129,13 +135,13 @@ So, the order of `new UserRepository()` and `txManager.Begin()` doesn't matter, 
 
 ### IoC
 If you use IoC containers like `Microsoft.Extensions.DependencyInjection` or `Autofac`, here's the best practise:
-* Create a singleton `TransactionManager`;
+* Create a shared `FlowableTransactionManager`;
 * Create each `DatabaseManager` per http request and let it disposed at the end of the request;
 * Create repositories and acquire transactions per usage, in your business logic layer.
 
 ```csharp
     // Autofac
-    builder.RegisterType<TransactionManager>().AsSelf().AsImplementedInterfaces().SingleInstance();
+    builder.RegisterType<FlowableTransactionManager>().AsSelf().AsImplementedInterfaces().SingleInstance();
     builder.Register(c => new DatabaseManager(new DbContextOptionsBuilder()
             .UseSqlServer(ConnectionString)
             .Options, c.Resolve<ITransactionManager>(), c.Resolve<SqlServerEntityQueryBuilder>()
